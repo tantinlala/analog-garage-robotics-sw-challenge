@@ -12,8 +12,6 @@ RUN apt update -q \
     python3-pip \
     xauth \
     clangd \
-    libgtest-dev \
-    libgmock-dev \
     && apt clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
