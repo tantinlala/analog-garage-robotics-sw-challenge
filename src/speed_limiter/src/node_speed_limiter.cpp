@@ -15,7 +15,7 @@ class Node : public rclcpp::Node
 {
     public:
         Node() : rclcpp::Node("speed_limiter"),
-            publisher_(this->create_publisher<std_msgs::msg::String>("speed_state", kQueueDepth)),
+            publisher_(this->create_publisher<std_msgs::msg::String>("analog/speed_state", kQueueDepth)),
             state_publisher_(std::make_shared<StatePublisher>(publisher_)),
             estopped_state_(state_publisher_),
             stop_state_(
@@ -32,20 +32,20 @@ class Node : public rclcpp::Node
             },
             full_speed_state_{
                 StateId::FULL_SPEED,
-                NotEstoppedState::ProximityBoundary{StateId::STOP, kDefaultFullSpeedThreshold},
+                NotEstoppedState::ProximityBoundary{StateId::SLOW, kDefaultFullSpeedThreshold},
                 std::nullopt,
                 state_publisher_,
             },
             state_machine_{{&estopped_state_, &stop_state_, &slow_state_, &full_speed_state_}}
         {
             this->estop_subscription_ = this->create_subscription<std_msgs::msg::Bool>(
-                "estop_cleared", 
+                "analog/estop_triggered", 
                 kQueueDepth, 
                 std::bind(&Node::EstopCallback, this, std::placeholders::_1)
             );
 
             this->proximity_subscription_ = this->create_subscription<std_msgs::msg::Float32>(
-                "proximity_data", 
+                "analog/proximity_data", 
                 kQueueDepth, 
                 std::bind(&Node::ProximityDataCallback, this, std::placeholders::_1)
             );
@@ -56,9 +56,10 @@ class Node : public rclcpp::Node
 
         void EstopCallback(const std_msgs::msg::Bool::SharedPtr msg)
         {
-            if (msg->data)
+            const bool estop_triggered{msg->data};
+            if (estop_triggered)
             {
-                state_machine_.ProcessEvent(EstopSet{});
+                state_machine_.ProcessEvent(EstopTriggered{});
             }
             else
             {

@@ -10,8 +10,8 @@ namespace analog::sm
 
 enum class TestStateId 
 {
-    STATE_A,
-    STATE_B,
+    state_a,
+    state_b,
     num_state_ids
 };
 

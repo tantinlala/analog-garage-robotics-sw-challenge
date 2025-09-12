@@ -36,7 +36,7 @@ TEST_F(StopStateTest, When_EstopCleared_Expect_StayInState)
 
 TEST_F(StopStateTest, When_EstopSet_Expect_ReturnEstopped)
 {
-    const auto new_state_id{state_ptr_->Process(EstopSet{})};
+    const auto new_state_id{state_ptr_->Process(EstopTriggered{})};
     EXPECT_EQ(new_state_id, StateId::ESTOPPED);
 }
 

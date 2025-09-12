@@ -29,7 +29,7 @@ StateId BaseState::Process(const Events& event)
         return this->Handle(event); }, event);
 }
 
-StateId BaseState::Handle(const EstopSet /*event*/)
+StateId BaseState::Handle(const EstopTriggered /*event*/)
 {
     return StateId::ESTOPPED;
 }

@@ -14,10 +14,10 @@ namespace analog::speed_limiter
  */
 enum class StateId 
 {
-    FULL_SPEED,
-    SLOW,
-    STOP,
     ESTOPPED,
+    STOP,
+    SLOW,
+    FULL_SPEED,
     num_state_ids
 };
 
@@ -29,7 +29,7 @@ struct EstopCleared {};
 /**
  * @brief Estop set event
  */
-struct EstopSet {};
+struct EstopTriggered {};
 /**
  * @brief Proximity data event
  */
@@ -38,7 +38,7 @@ struct ProximityData
     float distance;
 };
 
-using Events = std::variant<EstopCleared, EstopSet, ProximityData>;
+using Events = std::variant<EstopCleared, EstopTriggered, ProximityData>;
 
 /**
  * @brief Base class for all states in the speed limiter state machine.
@@ -55,7 +55,7 @@ class BaseState : public sm::IState<StateId, Events>
     private:
         void Enter() override;
         StateId Process(const Events& event) override;
-        StateId Handle(const EstopSet event);
+        StateId Handle(const EstopTriggered event);
         virtual StateId Handle(const EstopCleared event) = 0;
         virtual StateId Handle(const ProximityData event) = 0;
 
