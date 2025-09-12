@@ -12,25 +12,27 @@ namespace analog::sm
 class StateMachineTest : public Test
 {
     protected:
-        MockState state_a{TestStateId::STATE_A};
-        MockState state_b{TestStateId::STATE_B};
+        MockState state_a;
+        MockState state_b;
 };  
 
 TEST_F(StateMachineTest, When_Constructed_Expect_FirstStateIsEntered)
 {
     EXPECT_CALL(this->state_a, Enter()).Times(1);
+    EXPECT_CALL(this->state_a, GetStateId()).WillOnce(Return(TestStateId::STATE_A));
     StateMachine<TestStateId, TestEventContainer> state_machine
         {{&this->state_a, &this->state_b}};
 }
 
 TEST_F(StateMachineTest, When_ProcessReturnsCurrentState_Expect_DoNothing)
 {
+    EXPECT_CALL(this->state_a, GetStateId()).WillOnce(Return(TestStateId::STATE_A));
     StateMachine<TestStateId, TestEventContainer> state_machine
         {{&this->state_a, &this->state_b}};
 
     const TestEventY event{1.0};
     const TestEventContainer event_container{event};
-    const auto current_state_id{this->state_a.GetStateId()};
+    const auto current_state_id{TestStateId::STATE_A};
 
     EXPECT_CALL(this->state_a, Process(event_container))
         .Times(1)
@@ -44,12 +46,13 @@ TEST_F(StateMachineTest, When_ProcessReturnsCurrentState_Expect_DoNothing)
 
 TEST_F(StateMachineTest, When_ProcessReturnsNewState_Expect_EnterNewState)
 {
+    EXPECT_CALL(this->state_a, GetStateId()).WillOnce(Return(TestStateId::STATE_A));
     StateMachine<TestStateId, TestEventContainer> state_machine
         {{&this->state_a, &this->state_b}};
 
     const TestEventX event{-1};
     const TestEventContainer event_container{event};
-    const auto new_state_id{this->state_b.GetStateId()};
+    const auto new_state_id{TestStateId::STATE_B};
 
     EXPECT_CALL(this->state_b, Process(event_container))
         .Times(1)

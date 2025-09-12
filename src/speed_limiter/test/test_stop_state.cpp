@@ -18,7 +18,7 @@ class StopStateTest: public Test
             NotEstoppedState::ProximityBoundary{StateId::SLOW, kMaxBoundary},
             publisher_ptr_
         };
-        sm::State<StateId, Events>* state_ptr_{&full_speed_state_};
+        sm::IState<StateId, Events>* state_ptr_{&full_speed_state_};
 };
 
 TEST_F(StopStateTest, When_Enter_Expect_PublishStop)

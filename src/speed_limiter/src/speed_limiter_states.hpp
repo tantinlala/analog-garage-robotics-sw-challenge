@@ -3,7 +3,7 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include "state_machine/state.hpp"
+#include "state_machine/i_state.hpp"
 #include "i_publisher.hpp"
 
 namespace analog::speed_limiter
@@ -43,11 +43,14 @@ using Events = std::variant<EstopCleared, EstopSet, ProximityData>;
 /**
  * @brief Base class for all states in the speed limiter state machine.
  */
-class BaseState : public sm::State<StateId, Events>
+class BaseState : public sm::IState<StateId, Events>
 {
     public:
         using PublisherPtr = std::shared_ptr<IPublisher<StateId>>;
         BaseState(StateId id, PublisherPtr publisher);
+
+    protected:
+        StateId GetStateId() override;
 
     private:
         void Enter() override;
@@ -56,6 +59,7 @@ class BaseState : public sm::State<StateId, Events>
         virtual StateId Handle(const EstopCleared event) = 0;
         virtual StateId Handle(const ProximityData event) = 0;
 
+        StateId state_id_;
         PublisherPtr publisher_;
 };
 

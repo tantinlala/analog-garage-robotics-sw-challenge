@@ -12,27 +12,22 @@ namespace analog::sm
  * machine can process (e.g., std::variant, union)
  */
 template <class StateIdT, class EventContainerT>
-class State
+class IState
 {
     static_assert(std::is_enum_v<StateIdT>, "StateIdT must be an enum");
 
     public:
-    /**
-     * @brief Construct a new State object
-     * @param state_id The state identifier
-     */
-    State(StateIdT state_id) : state_id_(state_id) {}
 
     /**
      * @brief Destroy the State object
      */
-    virtual ~State() = default;
+    virtual ~IState() = default;
 
     /**
      * @brief Get the ID of this State
      * @return StateIdT The state identifier
      */
-    [[nodiscard]] StateIdT GetStateId() const { return this->state_id_; }
+    virtual StateIdT GetStateId() = 0;
 
     /**
      * @brief Called when the parent state machine enters this state
@@ -52,9 +47,6 @@ class State
      */
     [[nodiscard]] virtual StateIdT Process(
         const EventContainerT& event_container) = 0;
-
-    private:
-        StateIdT state_id_;
 };
 
 }

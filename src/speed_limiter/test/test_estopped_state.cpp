@@ -12,7 +12,7 @@ class EstoppedStateTest: public Test
     protected:
         std::shared_ptr<MockPublisher<StateId>> publisher_ptr_{new MockPublisher<StateId>()};
         EstoppedState estopped_state_{publisher_ptr_};
-        sm::State<StateId, Events>* state_ptr_{&estopped_state_};
+        sm::IState<StateId, Events>* state_ptr_{&estopped_state_};
 };
 
 TEST_F(EstoppedStateTest, When_Entered_Expect_PublishEstopped)

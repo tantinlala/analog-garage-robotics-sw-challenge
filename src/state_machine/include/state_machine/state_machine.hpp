@@ -1,6 +1,6 @@
 #pragma once
 
-#include "state.hpp"
+#include "i_state.hpp"
 #include <array>
 
 namespace analog::sm
@@ -17,7 +17,7 @@ template <class StateIdT, class EventContainerT>
 class StateMachine final
 {
     public:
-        using StateT = State<StateIdT, EventContainerT>;
+        using StateT = IState<StateIdT, EventContainerT>;
         using StateArray = std::array<StateT *const, 
             static_cast<std::size_t>(StateIdT::num_state_ids)>;
 

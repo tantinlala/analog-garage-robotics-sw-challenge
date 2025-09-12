@@ -7,7 +7,13 @@ namespace analog::speed_limiter
 // BaseState Implementation
 
 BaseState::BaseState(StateId id, PublisherPtr publisher)
-    : State(id), publisher_(publisher) {}
+    : state_id_(id), publisher_(publisher) {}
+
+
+StateId BaseState::GetStateId()
+{
+    return state_id_;
+}
 
 void BaseState::Enter()
 {

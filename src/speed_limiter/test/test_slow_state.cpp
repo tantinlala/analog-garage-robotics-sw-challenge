@@ -20,7 +20,7 @@ class SlowStateTest: public Test
             publisher_ptr_
         };
 
-        sm::State<StateId, Events>* state_ptr_{&slow_state_};
+        sm::IState<StateId, Events>* state_ptr_{&slow_state_};
 };
 
 TEST_F(SlowStateTest, When_Enter_Expect_PublishSlow)

@@ -18,7 +18,7 @@ class FullSpeedStateTest: public Test
             std::nullopt,
             publisher_ptr_
         };
-        sm::State<StateId, Events>* state_ptr_{&full_speed_state_};
+        sm::IState<StateId, Events>* state_ptr_{&full_speed_state_};
 };
 
 TEST_F(FullSpeedStateTest, When_Enter_Expect_PublishFullSpeed)

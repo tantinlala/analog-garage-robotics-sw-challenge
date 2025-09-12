@@ -3,7 +3,7 @@
 #include <gmock/gmock.h>
 #include <variant>
 
-#include "state_machine/state.hpp"
+#include "state_machine/i_state.hpp"
 
 namespace analog::sm 
 {
@@ -20,10 +20,10 @@ using TestEventY = double;
 
 using TestEventContainer = std::variant<TestEventX, TestEventY>;
 
-class MockState : public State<TestStateId, TestEventContainer>
+class MockState : public IState<TestStateId, TestEventContainer>
 {
     public:
-        MockState(TestStateId state_id) : State(state_id) {};
+        MOCK_METHOD(TestStateId, GetStateId, (), (override));
         MOCK_METHOD(void, Enter, (), (override));
         MOCK_METHOD(TestStateId, Process, 
             (const TestEventContainer& event_container), (override));
