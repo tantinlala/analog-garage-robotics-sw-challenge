@@ -1,0 +1,70 @@
+cmake_minimum_required(VERSION 3.8)
+project(speed_limiter)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+
+set(SOURCE_FILES
+  src/speed_limiter_states.cpp
+)
+
+set(INCLUDE_DIRS
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+add_executable(speed_limiter  
+  src/node_speed_limiter.cpp
+  ${SOURCE_FILES}
+)
+
+ament_target_dependencies(speed_limiter rclcpp std_msgs)
+target_include_directories(speed_limiter PUBLIC
+  ${INCLUDE_DIRS}
+)
+
+install(TARGETS speed_limiter
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_gmock REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # comment the line when a copyright and license is added to all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # comment the line when this package is in a git repo and when
+  # a copyright and license is added to all source files
+  set(ament_cmake_cpplint_FOUND TRUE)
+
+  set(TEST_FILES
+    test/test_estopped_state.cpp
+    test/test_stop_state.cpp
+    test/test_slow_state.cpp
+    test/test_full_speed_state.cpp
+  )
+
+  ament_add_gmock(test_speed_limiter
+    ${TEST_FILES}
+    ${SOURCE_FILES}
+  )
+
+  target_include_directories(test_speed_limiter PUBLIC
+    ${INCLUDE_DIRS}
+  )
+
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()
