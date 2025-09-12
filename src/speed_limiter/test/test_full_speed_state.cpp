@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "speed_limiter/speed_limiter_states.hpp"
+#include "speed_limiter_states.hpp"
 #include "mocks/mock_publisher.hpp"
 
 using testing::Test;

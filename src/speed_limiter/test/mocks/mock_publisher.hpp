@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gmock/gmock.h>
-#include "speed_limiter/i_publisher.hpp"
+#include "i_publisher.hpp"
 
 namespace analog::speed_limiter 
 {

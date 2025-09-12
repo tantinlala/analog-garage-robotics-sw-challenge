@@ -3,8 +3,8 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include "../../state_machine/include/state_machine/state.hpp"
-#include "speed_limiter/i_publisher.hpp"
+#include "state_machine/state.hpp"
+#include "i_publisher.hpp"
 
 namespace analog::speed_limiter
 {

@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(speed_limiter)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+include(../CMakeCommon.txt)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -12,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(state_machine REQUIRED)
 
 set(SOURCE_FILES
   src/speed_limiter_states.cpp
@@ -22,17 +20,17 @@ set(INCLUDE_DIRS
   $<INSTALL_INTERFACE:include>
 )
 
-add_executable(speed_limiter  
+add_executable(${PROJECT_NAME}  
   src/node_speed_limiter.cpp
   ${SOURCE_FILES}
 )
 
-ament_target_dependencies(speed_limiter rclcpp std_msgs)
-target_include_directories(speed_limiter PUBLIC
+ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs state_machine)
+target_include_directories(${PROJECT_NAME} PUBLIC
   ${INCLUDE_DIRS}
 )
 
-install(TARGETS speed_limiter
+install(TARGETS ${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -55,14 +53,20 @@ if(BUILD_TESTING)
     test/test_full_speed_state.cpp
   )
 
-  ament_add_gmock(test_speed_limiter
+  ament_add_gmock(test_${PROJECT_NAME}
     ${TEST_FILES}
     ${SOURCE_FILES}
   )
 
-  target_include_directories(test_speed_limiter PUBLIC
+  target_include_directories(test_${PROJECT_NAME} PRIVATE
     ${INCLUDE_DIRS}
   )
+
+  target_include_directories(test_${PROJECT_NAME} PRIVATE
+    src
+  )
+
+  ament_target_dependencies(test_${PROJECT_NAME} state_machine)
 
   ament_lint_auto_find_test_dependencies()
 endif()

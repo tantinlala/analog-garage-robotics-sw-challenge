@@ -4,9 +4,9 @@
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/string.hpp>
-#include "../../state_machine/include/state_machine/state_machine.hpp"
-#include "speed_limiter/speed_limiter_states.hpp"
-#include "speed_limiter/state_publisher.hpp"
+#include "state_machine/state_machine.hpp"
+#include "speed_limiter_states.hpp"
+#include "state_publisher.hpp"
 
 namespace analog::speed_limiter 
 {
