@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <optional>
+#include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -35,15 +36,19 @@ class Node : public rclcpp::Node
             },
             state_machine_{{&estopped_state_, &stop_state_, &slow_state_, &full_speed_state_}}
         {
+
+            rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
+            estop_qos.keep_last(1).transient_local().reliable();
+
             this->estop_subscription_ = this->create_subscription<std_msgs::msg::Bool>(
                 "analog/estop_triggered", 
-                kQueueDepth, 
+                estop_qos, 
                 std::bind(&Node::EstopCallback, this, std::placeholders::_1)
             );
 
             this->proximity_subscription_ = this->create_subscription<std_msgs::msg::Float32>(
                 "analog/proximity_data", 
-                kQueueDepth, 
+                rclcpp::SensorDataQoS(), 
                 std::bind(&Node::ProximityDataCallback, this, std::placeholders::_1)
             );
         }

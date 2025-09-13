@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <rclcpp/parameter.hpp>
+#include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/timer.hpp>
 #include <std_msgs/msg/float32.hpp>
@@ -16,7 +17,7 @@ class Node : public rclcpp::Node
     public:
         Node()
           : rclcpp::Node("proximity_sensor"),
-            publisher_(this->create_publisher<std_msgs::msg::Float32>("analog/proximity_data", kQueueDepth))
+            publisher_(this->create_publisher<std_msgs::msg::Float32>("analog/proximity_data", rclcpp::SensorDataQoS()))
         {
           // Set up timer
           this->declare_parameter(kSampleTimeParamName, 500);
@@ -33,7 +34,6 @@ class Node : public rclcpp::Node
         }
 
     private:
-        static constexpr int kQueueDepth{10}; // TODO: choose this
         static constexpr const char * kSampleTimeParamName{"sample_time_ms"};
         static constexpr const char * kDistanceSeriesParamName{"distance_series"};
         std::unique_ptr<ListDistanceSource> distance_source_;
