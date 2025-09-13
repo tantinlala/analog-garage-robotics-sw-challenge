@@ -1,5 +1,8 @@
 #include "i_publisher.hpp"
 #include "speed_limiter_states.hpp"
+#include <algorithm>
+#include <stdexcept>
+#include <set>
 
 namespace analog::speed_limiter 
 {
@@ -52,10 +55,10 @@ StateId EstoppedState::Handle(const ProximityData /*event*/)
 // NotEstoppedState Implementation
 
 NotEstoppedState::NotEstoppedState(StateId id, const Params& params, PublisherPtr publisher) : 
-    BaseState(id, publisher), params_(&params)
+    BaseState(id, publisher)
 {
-    // TODO: check whether boundaries are ordered as required
-
+    this->CheckParams(params);
+    this->params_ = &params;
 }
 
 StateId NotEstoppedState::Handle(const EstopCleared /*event*/)
@@ -86,6 +89,47 @@ StateId NotEstoppedState::Handle(const ProximityData event)
     }
 
     return this->GetStateId();
+}
+
+void NotEstoppedState::CheckParams(const Params& params)
+{
+    // Check whether sorted
+    if (!std::is_sorted(params.boundaries.begin(), 
+        params.boundaries.end(), 
+        [](ProximityBoundary a, ProximityBoundary b) {
+        return a.distance < b.distance;
+    }))
+    {
+        throw std::runtime_error("NotEstoppedState: proximity boundaries should be in ascending order.");
+    }
+
+    // Check for allowable hysteresis value
+    if (params.hysteresis < 0)
+    {
+        throw std::runtime_error("NotEstoppedState: hysteresis can't be negative.");
+    }
+
+    // Check for duplicates
+    std::set<StateId> state_set;
+    for (auto & boundary : params.boundaries)
+    {
+        state_set.insert(boundary.boundary_state);
+    }
+    if (state_set.size() != params.boundaries.size())
+    {
+        throw std::runtime_error("NotEstoppedState: duplicate states found in boundaries.");
+    }
+
+    // Check for allowed state values
+    if (state_set.find(StateId::ESTOPPED) != state_set.end())
+    {
+        throw std::runtime_error("NotEstoppedState: ESTOPPED cannot be used as boundary.");
+    }
+
+    if (state_set.find(StateId::num_state_ids) != state_set.end())
+    {
+        throw std::runtime_error("NotEstoppedState: num_state_ids cannot be used as boundary.");
+    }
 }
 
 }

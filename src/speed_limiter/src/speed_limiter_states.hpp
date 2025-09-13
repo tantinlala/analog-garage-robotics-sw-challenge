@@ -102,6 +102,8 @@ class NotEstoppedState : public BaseState
 
         StateId Handle(const EstopCleared event) override;
         StateId Handle(const ProximityData event) override;
+
+        static void CheckParams(const Params& params);
 };
 
 }
