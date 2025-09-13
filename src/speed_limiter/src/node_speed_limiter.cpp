@@ -20,20 +20,17 @@ class Node : public rclcpp::Node
             estopped_state_(state_publisher_),
             stop_state_(
                 StateId::STOP, 
-                std::nullopt,
-                NotEstoppedState::ProximityBoundary{StateId::SLOW, kDefaultStopThreshold + kDefaultHysteresis},
+                params_,
                 state_publisher_
             ),
             slow_state_{
                 StateId::SLOW,
-                NotEstoppedState::ProximityBoundary{StateId::STOP, kDefaultStopThreshold},
-                NotEstoppedState::ProximityBoundary{StateId::FULL_SPEED, kDefaultFullSpeedThreshold + kDefaultHysteresis},
+                params_,
                 state_publisher_,
             },
             full_speed_state_{
                 StateId::FULL_SPEED,
-                NotEstoppedState::ProximityBoundary{StateId::SLOW, kDefaultFullSpeedThreshold},
-                std::nullopt,
+                params_,
                 state_publisher_,
             },
             state_machine_{{&estopped_state_, &stop_state_, &slow_state_, &full_speed_state_}}
@@ -53,6 +50,11 @@ class Node : public rclcpp::Node
 
     private:
         static constexpr int kQueueDepth{10}; // TODO: choose this
+
+        NotEstoppedState::Params params_ = { 
+            { { StateId::STOP, 400.0}, {StateId::SLOW, 800.0}, {StateId::FULL_SPEED, std::numeric_limits<float>::infinity()} },
+            50.0,
+        };
 
         void EstopCallback(const std_msgs::msg::Bool::SharedPtr msg)
         {
@@ -76,10 +78,6 @@ class Node : public rclcpp::Node
         rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr proximity_subscription_;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
         std::shared_ptr<StatePublisher> state_publisher_;
-
-        static constexpr float kDefaultStopThreshold{400.0f};
-        static constexpr float kDefaultFullSpeedThreshold{800.0f};
-        static constexpr float kDefaultHysteresis{50.0f};
 
         EstoppedState estopped_state_;
         NotEstoppedState stop_state_;

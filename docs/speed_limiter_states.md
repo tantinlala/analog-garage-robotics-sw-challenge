@@ -20,5 +20,7 @@ stateDiagram-v2
         Slow --> Stop: Distance < 400mm
         Slow --> Full: Distance > 800mm + Hysteresis
         Full --> Slow: Distance < 800mm
+        Full --> Stop: Distance < 400mm
+        Stop --> Full: Distance > 800mm + Hysteresis
     }
 

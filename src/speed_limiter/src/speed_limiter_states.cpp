@@ -51,9 +51,12 @@ StateId EstoppedState::Handle(const ProximityData /*event*/)
 
 // NotEstoppedState Implementation
 
-NotEstoppedState::NotEstoppedState(StateId id, std::optional<ProximityBoundary> min,
-    std::optional<ProximityBoundary> max, PublisherPtr publisher) : 
-    BaseState(id, publisher), min_boundary_(min), max_boundary_(max) {}
+NotEstoppedState::NotEstoppedState(StateId id, const Params& params, PublisherPtr publisher) : 
+    BaseState(id, publisher), params_(&params)
+{
+    // TODO: check whether boundaries are ordered as required
+
+}
 
 StateId NotEstoppedState::Handle(const EstopCleared /*event*/)
 {
@@ -62,16 +65,24 @@ StateId NotEstoppedState::Handle(const EstopCleared /*event*/)
 
 StateId NotEstoppedState::Handle(const ProximityData event)
 {
-    if (min_boundary_.has_value() && 
-        (event.distance < min_boundary_.value().distance))
+    float distance{event.distance};
+    float hysteresis{this->params_->hysteresis};
+    StateId current_state{this->GetStateId()};
+    bool passed_current_state{false};
+    for (auto &boundary : this->params_->boundaries)
     {
-        return min_boundary_.value().boundary_state;
-    }
-
-    if (max_boundary_.has_value() && 
-        (event.distance > max_boundary_.value().distance))
-    {
-        return max_boundary_.value().boundary_state;
+        passed_current_state |= (boundary.boundary_state == current_state);
+        if (passed_current_state)
+        {
+            if (distance < boundary.distance + hysteresis)
+            {
+                return boundary.boundary_state;
+            }
+        }
+        else if (distance <= boundary.distance)
+        {
+            return boundary.boundary_state;
+        }
     }
 
     return this->GetStateId();

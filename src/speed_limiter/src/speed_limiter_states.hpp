@@ -3,6 +3,7 @@
 #include <memory>
 #include <variant>
 #include <optional>
+#include <vector>
 #include "state_machine/i_state.hpp"
 #include "i_publisher.hpp"
 
@@ -88,12 +89,16 @@ class NotEstoppedState : public BaseState
             float distance;
         };
 
-        NotEstoppedState(StateId id, std::optional<ProximityBoundary> min,
-            std::optional<ProximityBoundary> max, PublisherPtr publisher);
+        struct Params 
+        {
+            std::vector<ProximityBoundary> boundaries;
+            float hysteresis;
+        };
+
+        NotEstoppedState(StateId id, const Params& params, PublisherPtr publisher);
 
     private:
-        std::optional<ProximityBoundary> min_boundary_;
-        std::optional<ProximityBoundary> max_boundary_;
+        const Params* params_;
 
         StateId Handle(const EstopCleared event) override;
         StateId Handle(const ProximityData event) override;

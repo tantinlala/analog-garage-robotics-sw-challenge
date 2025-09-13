@@ -48,9 +48,7 @@ if(BUILD_TESTING)
 
   set(TEST_FILES
     test/test_estopped_state.cpp
-    test/test_stop_state.cpp
-    test/test_slow_state.cpp
-    test/test_full_speed_state.cpp
+    test/test_not_estopped_state.cpp
   )
 
   ament_add_gmock(test_${PROJECT_NAME}
