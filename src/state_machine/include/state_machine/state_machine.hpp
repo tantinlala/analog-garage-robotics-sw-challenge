@@ -60,7 +60,7 @@ class StateMachine final
         }
 
         this->current_index_ = 0;
-        this->states_[0]->Enter();
+        this->states_.at(0)->Enter();
     }
 
     /**
@@ -93,7 +93,7 @@ class StateMachine final
             throw std::out_of_range("StateMachine: Invalid state index");
         }
 
-        return this->states_[index];
+        return this->states_.at(index);
     }
 };
 }
