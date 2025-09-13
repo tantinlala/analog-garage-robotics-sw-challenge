@@ -15,18 +15,18 @@ set(SOURCE_FILES
   src/list_distance_source.cpp
 )
 
-add_executable(${PROJECT_NAME}  
+add_executable(node_${PROJECT_NAME}  
   src/node_proximity_sensor.cpp
   ${SOURCE_FILES}
 )
 
-ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs)
+ament_target_dependencies(node_${PROJECT_NAME} rclcpp std_msgs)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(node_${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS node_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

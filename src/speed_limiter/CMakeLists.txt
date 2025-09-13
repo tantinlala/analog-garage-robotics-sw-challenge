@@ -20,17 +20,17 @@ set(INCLUDE_DIRS
   $<INSTALL_INTERFACE:include>
 )
 
-add_executable(${PROJECT_NAME}  
+add_executable(node_${PROJECT_NAME}  
   src/node_speed_limiter.cpp
   ${SOURCE_FILES}
 )
 
-ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs state_machine)
-target_include_directories(${PROJECT_NAME} PUBLIC
+ament_target_dependencies(node_${PROJECT_NAME} rclcpp std_msgs state_machine)
+target_include_directories(node_${PROJECT_NAME} PUBLIC
   ${INCLUDE_DIRS}
 )
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS node_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME}
 )
 
