@@ -12,6 +12,12 @@ proximity_sensor:
     ros__parameters:
         sample_time_ms: 500
         distance_series: [
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
+            1000.0,
             850.0,
             840.0,
             830.0,
