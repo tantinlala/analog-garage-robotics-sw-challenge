@@ -13,6 +13,8 @@ RUN apt update -q \
     xauth \
     clangd \
     vim \
+    ros-humble-rviz2 \
+    ros-humble-mvsim \
     && apt clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
