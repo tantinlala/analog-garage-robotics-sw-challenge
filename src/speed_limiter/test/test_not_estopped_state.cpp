@@ -24,7 +24,7 @@ struct TestParams
 {
   // Given
   StateId initial_state;
-  float distance;
+  float distance_mm;
 
   // Expect
   StateId expected_state;
@@ -40,8 +40,8 @@ protected:
 
 TEST_F(NotEstoppedTest, When_BoundariesOutOfOrder_ExpectThrow)
 {
-  params_ptr->boundaries.at(0).distance = 800.0;
-  params_ptr->boundaries.at(1).distance = 400.0;
+  params_ptr->boundaries.at(0).distance_mm = 800.0;
+  params_ptr->boundaries.at(1).distance_mm = 400.0;
   EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
@@ -110,7 +110,7 @@ TEST_P(NotEstoppedTest, Given_Distance_Expect_CorrectState)
 INSTANTIATE_TEST_SUITE_P(
   Transition, NotEstoppedTest,
   Values(
-    // STOP State
+    // Given in STOP State
     TestParams{StateId::STOP, -1.0, StateId::STOP},
     TestParams{StateId::STOP, 49.0, StateId::STOP},
     TestParams{StateId::STOP, 50.0, StateId::STOP},
@@ -129,7 +129,7 @@ INSTANTIATE_TEST_SUITE_P(
     TestParams{StateId::STOP, 851.0, StateId::FULL_SPEED},
     TestParams{StateId::STOP, 900.0, StateId::FULL_SPEED},
 
-    // SLOW State
+    // Given in SLOW State
     TestParams{StateId::SLOW, -1.0, StateId::STOP},
     TestParams{StateId::SLOW, 49.0, StateId::STOP},
     TestParams{StateId::SLOW, 50.0, StateId::STOP},
@@ -148,7 +148,7 @@ INSTANTIATE_TEST_SUITE_P(
     TestParams{StateId::SLOW, 851.0, StateId::FULL_SPEED},
     TestParams{StateId::SLOW, 900.0, StateId::FULL_SPEED},
 
-    // FULL_SPEED State
+    // Give in FULL_SPEED State
     TestParams{StateId::FULL_SPEED, -1.0, StateId::STOP},
     TestParams{StateId::FULL_SPEED, 49.0, StateId::STOP},
     TestParams{StateId::FULL_SPEED, 50.0, StateId::STOP},

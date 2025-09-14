@@ -8,6 +8,9 @@
 namespace analog::speed_limiter
 {
 
+/**
+ * @brief Class for publishing speed state messages over ROS and logging states published.
+ */
 class SpeedStatePublisher : public IPublisher<StateId>
 {
 public:
@@ -15,29 +18,15 @@ public:
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher,
     rclcpp::Logger & logger);
 
-  void Publish(const StateId state);
-
-  static const char * ToString(const StateId state)
-  {
-    switch (state) {
-      case StateId::FULL_SPEED:
-        return "FULL_SPEED";
-      case StateId::SLOW:
-        return "SLOW";
-      case StateId::STOP:
-        return "STOP";
-      case StateId::ESTOPPED:
-        return "ESTOPPED";
-      default:
-        return "UNKNOWN_STATE";
-    }
-  }
+  /**
+   * @brief Publish a speed state message over ROS and log the state.
+   * @param state The StateId to publish and log
+   */
+  void Publish(const StateId state) override;
 
 private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp::Logger * logger_;
-  std::optional<StateId> last_state_;
-
 };
 
 }

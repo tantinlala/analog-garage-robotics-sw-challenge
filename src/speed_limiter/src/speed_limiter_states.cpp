@@ -7,6 +7,22 @@
 namespace analog::speed_limiter
 {
 
+const char * state_id_to_string(const StateId state)
+{
+  switch (state) {
+    case StateId::FULL_SPEED:
+      return "FULL_SPEED";
+    case StateId::SLOW:
+      return "SLOW";
+    case StateId::STOP:
+      return "STOP";
+    case StateId::ESTOPPED:
+      return "ESTOPPED";
+    default:
+      return "UNKNOWN_STATE";
+  }
+}
+
 // BaseState Implementation
 
 BaseState::BaseState(StateId id, PublisherPtr publisher)
@@ -78,15 +94,15 @@ StateId NotEstoppedState::Handle(const ProximityData event)
   for (auto & boundary : this->params_->boundaries) {
     passed_current_state |= (boundary.state == current_state);
     if (passed_current_state) {
-      if (distance < boundary.distance + hysteresis) {
+      if (distance < boundary.distance_mm + hysteresis) {
         return boundary.state;
       }
-    } else if (distance <= boundary.distance) {
+    } else if (distance <= boundary.distance_mm) {
       return boundary.state;
     }
   }
 
-  return this->GetStateId();
+  return StateId::ESTOPPED; // We shouldn't ever get here
 }
 
 void NotEstoppedState::CheckParams(const Params & params)
@@ -96,7 +112,7 @@ void NotEstoppedState::CheckParams(const Params & params)
       params.boundaries.begin(),
       params.boundaries.end(),
       [](ProximityBoundary a, ProximityBoundary b) {
-        return a.distance < b.distance;
+        return a.distance_mm < b.distance_mm;
       }))
   {
     throw std::runtime_error("NotEstoppedState: proximity boundaries should be in ascending order.");

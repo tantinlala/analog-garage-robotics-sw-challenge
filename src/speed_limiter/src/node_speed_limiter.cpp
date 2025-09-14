@@ -35,7 +35,7 @@ void Node::DeclareBoundaryParameter(
       params->boundaries.begin(),
       params->boundaries.end(),
       [state](auto & boundary) {return boundary.state == state;})};
-  boundary->distance = boundary_distance.as_double();
+  boundary->distance_mm = boundary_distance.as_double();
 }
 
 std::shared_ptr<NotEstoppedState::Params> Node::SetupParams()
@@ -51,8 +51,8 @@ std::shared_ptr<NotEstoppedState::Params> Node::SetupParams()
     RCLCPP_INFO(
       this->logger_,
       "Boundary for state %s set to %.1f mm",
-      SpeedStatePublisher::ToString(boundary.state),
-      boundary.distance);
+      state_id_to_string(boundary.state),
+      boundary.distance_mm);
   }
   this->declare_parameter(kHysteresisName, kDefaultHysteresis);
   rclcpp::Parameter hysteresis = this->get_parameter(kHysteresisName);
