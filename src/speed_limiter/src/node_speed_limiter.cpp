@@ -27,6 +27,28 @@ public:
       speed_state_qos);
     auto state_publisher {std::make_shared<SpeedStatePublisher>(publisher, this->logger_)};
 
+    this->DeclareBoundaryParameter(kStopBoundaryName, StateId::STOP, 400.0);
+    this->DeclareBoundaryParameter(kSlowBoundaryName, StateId::SLOW, 800.0);
+    this->params_.boundaries.back() =
+      NotEstoppedState::ProximityBoundary{StateId::FULL_SPEED,
+      std::numeric_limits<float>::infinity()};
+
+    for (const auto & boundary : this->params_.boundaries) {
+      RCLCPP_INFO(
+        this->logger_,
+        "Boundary for state %d set to %.1f mm",
+        static_cast<int>(boundary.state),
+        boundary.distance);
+    }
+
+    this->declare_parameter(kHysteresisName, 50.0);
+    rclcpp::Parameter hysteresis = this->get_parameter(kHysteresisName);
+    this->params_.hysteresis = hysteresis.as_double();
+    RCLCPP_INFO(
+      this->logger_,
+      "Hysteresis set to %.1f mm",
+      this->params_.hysteresis);
+
     auto estopped_state = std::make_shared<EstoppedState>(state_publisher);
     auto stop_state = std::make_shared<NotEstoppedState>(
       StateId::STOP,
@@ -69,13 +91,6 @@ public:
       rclcpp::SensorDataQoS(),
       std::bind(&Node::ProximityDataCallback, this, std::placeholders::_1)
     );
-
-    this->DeclareBoundaryParameter(kStopBoundaryName, StateId::STOP, 400.0);
-    this->DeclareBoundaryParameter(kSlowBoundaryName, StateId::SLOW, 800.0);
-
-    this->declare_parameter(kHysteresisName, 50.0);
-    rclcpp::Parameter hysteresis = this->get_parameter(kHysteresisName);
-    this->params_.hysteresis = hysteresis.as_double();
   }
 
 private:
@@ -85,12 +100,7 @@ private:
   static constexpr const char * kSlowBoundaryName{"slow_boundary"};
   static constexpr const char * kHysteresisName{"hysteresis"};
 
-  NotEstoppedState::Params params_ = {
-    {{StateId::STOP, 0.0},
-      {StateId::SLOW, 0.0},
-      {StateId::FULL_SPEED, std::numeric_limits<float>::infinity()}},
-    0.0,
-  };
+  NotEstoppedState::Params params_;
 
   void EstopCallback(const std_msgs::msg::Bool::SharedPtr msg)
   {

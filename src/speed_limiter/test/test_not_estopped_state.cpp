@@ -10,12 +10,13 @@ using testing::Values;
 namespace analog::speed_limiter
 {
 
+static const NotEstoppedState::ProximityBoundary kStopBoundary{StateId::STOP, 400.0};
+static const NotEstoppedState::ProximityBoundary kSlowBoundary{StateId::SLOW, 800.0};
+static const NotEstoppedState::ProximityBoundary kFullSpeedBoundary{StateId::FULL_SPEED,
+  std::numeric_limits<float>::infinity()};
+
 static const NotEstoppedState::Params kGoodParams{
-  {
-    {StateId::STOP, 400.0},
-    {StateId::SLOW, 800.0},
-    {StateId::FULL_SPEED, std::numeric_limits<float>::infinity()}
-  },
+  {kStopBoundary, kSlowBoundary, kFullSpeedBoundary},
   50.0,
 };
 
@@ -38,8 +39,7 @@ protected:
 TEST_F(NotEstoppedTest, When_BoundariesOutOfOrder_ExpectThrow)
 {
   static const NotEstoppedState::Params kBadParams{
-    {{StateId::STOP, 800.0}, {StateId::SLOW, 400.0}, {StateId::FULL_SPEED,
-        std::numeric_limits<float>::infinity()}},
+    {kSlowBoundary, kStopBoundary, kFullSpeedBoundary},
     50.0,
   };
 
@@ -49,8 +49,7 @@ TEST_F(NotEstoppedTest, When_BoundariesOutOfOrder_ExpectThrow)
 TEST_F(NotEstoppedTest, When_DuplicateStates_ExpectThrow)
 {
   static const NotEstoppedState::Params kBadParams = {
-    {{StateId::STOP, 400.0}, {StateId::STOP, 800.0}, {StateId::FULL_SPEED,
-        std::numeric_limits<float>::infinity()}},
+    {kStopBoundary, kStopBoundary, kFullSpeedBoundary},
     50.0,
   };
 
@@ -60,8 +59,7 @@ TEST_F(NotEstoppedTest, When_DuplicateStates_ExpectThrow)
 TEST_F(NotEstoppedTest, When_EstoppedStateStatesInParams_ExpectThrow)
 {
   static const NotEstoppedState::Params kBadParams = {
-    {{StateId::STOP, 400.0}, {StateId::SLOW, 800.0},
-      {StateId::ESTOPPED, std::numeric_limits<float>::infinity()}},
+    {kStopBoundary, kSlowBoundary, {StateId::ESTOPPED, std::numeric_limits<float>::infinity()}},
     50.0,
   };
 
@@ -71,8 +69,8 @@ TEST_F(NotEstoppedTest, When_EstoppedStateStatesInParams_ExpectThrow)
 TEST_F(NotEstoppedTest, When_NumStatesInParams_ExpectThrow)
 {
   static const NotEstoppedState::Params kBadParams = {
-    {{StateId::STOP, 400.0}, {StateId::SLOW, 800.0}, {StateId::num_state_ids,
-        std::numeric_limits<float>::infinity()}},
+    {kStopBoundary, kSlowBoundary,
+      {StateId::num_state_ids, std::numeric_limits<float>::infinity()}},
     50.0,
   };
 
@@ -82,8 +80,7 @@ TEST_F(NotEstoppedTest, When_NumStatesInParams_ExpectThrow)
 TEST_F(NotEstoppedTest, When_HysteresisNegative_ExpectThrow)
 {
   static const NotEstoppedState::Params kBadParams = {
-    {{StateId::STOP, 400.0}, {StateId::SLOW, 800.0}, {StateId::FULL_SPEED,
-        std::numeric_limits<float>::infinity()}},
+    {kStopBoundary, kSlowBoundary, kFullSpeedBoundary},
     -50.0,
   };
 

@@ -88,11 +88,19 @@ public:
     StateId state;
     float distance;
   };
-  using Boundaries = std::vector<ProximityBoundary>;
+
+  static constexpr std::size_t kNumProximityBoundaries =
+    static_cast<std::size_t>(StateId::num_state_ids) - 1;
+
+  using Boundaries = std::array<ProximityBoundary, kNumProximityBoundaries>;
 
   struct Params
   {
-    Boundaries boundaries;
+    Boundaries boundaries{{
+      {StateId::STOP, 0.0},
+      {StateId::SLOW, 0.0},
+      {StateId::FULL_SPEED, 0.0}
+    }};
     float hysteresis;
   };
 
