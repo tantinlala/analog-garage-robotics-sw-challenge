@@ -21,36 +21,37 @@ class Node : public rclcpp::Node
         {
             rclcpp::QoS speed_state_qos{rclcpp::SystemDefaultsQoS()};
             speed_state_qos.keep_last(2).transient_local().reliable();
-            this->publisher_ = this->create_publisher<std_msgs::msg::String>("analog/speed_state", speed_state_qos);
-            this->state_publisher_ = std::make_shared<StatePublisher>();
-            this->state_publisher_->SetPublisher(this->publisher_);
-            this->state_publisher_->SetLogger(this->logger_);
+            auto publisher = this->create_publisher<std_msgs::msg::String>("analog/speed_state", speed_state_qos);
 
-            this->estopped_state_ = std::make_shared<EstoppedState>(state_publisher_);
-            this->stop_state_ = std::make_shared<NotEstoppedState>(
+            auto state_publisher = std::make_shared<StatePublisher>();
+            state_publisher->SetPublisher(publisher);
+            state_publisher->SetLogger(this->logger_);
+
+            auto estopped_state = std::make_shared<EstoppedState>(state_publisher);
+            auto stop_state = std::make_shared<NotEstoppedState>(
                 StateId::STOP, 
                 params_,
-                state_publisher_
+                state_publisher
             );
 
-            this->slow_state_ = std::make_shared<NotEstoppedState>(
+            auto slow_state = std::make_shared<NotEstoppedState>(
                 StateId::SLOW,
                 params_,
-                state_publisher_
+                state_publisher
             );
-
-            this->full_speed_state_ = std::make_shared<NotEstoppedState>(
+            
+            auto full_speed_state = std::make_shared<NotEstoppedState>(
                 StateId::FULL_SPEED,
                 params_,
-                state_publisher_
+                state_publisher
             );
 
-            this->state_machine_ = std::make_shared<SpeedStateMachine>(
+            this->state_machine_ = std::make_unique<SpeedStateMachine>(
                 SpeedStateMachine::StateArray{
-                    this->estopped_state_,
-                    this->stop_state_,
-                    this->slow_state_,
-                    this->full_speed_state_
+                    estopped_state,
+                    stop_state,
+                    slow_state,
+                    full_speed_state
                 }
             );
 
@@ -122,14 +123,7 @@ class Node : public rclcpp::Node
         rclcpp::Logger logger_;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr estop_subscription_;
         rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr proximity_subscription_;
-        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-        std::shared_ptr<StatePublisher> state_publisher_;
-
-        std::shared_ptr<EstoppedState> estopped_state_;
-        std::shared_ptr<NotEstoppedState> stop_state_;
-        std::shared_ptr<NotEstoppedState> slow_state_;
-        std::shared_ptr<NotEstoppedState> full_speed_state_;
-        std::shared_ptr<SpeedStateMachine> state_machine_;
+        std::unique_ptr<SpeedStateMachine> state_machine_;
 };
 
 }

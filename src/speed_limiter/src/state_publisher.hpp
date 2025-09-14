@@ -66,7 +66,7 @@ class StatePublisher : public IPublisher<StateId>
             auto message = std_msgs::msg::String();
             const char* state_string(this->ToString(state));
 
-            if (this->logger_ != nullptr)
+            if (this->logger_)
             {
                 RCLCPP_INFO(*this->logger_, "Publishing %s", state_string);
             }
