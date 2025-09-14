@@ -1,7 +1,7 @@
 # Summary
 
 # Packages in workspace
-- estop_monitor - Contains a node for publishing time-triggered simulated e-stop events.
+- estop_monitor - Contains a node for publishing time-triggered simulated e-stop events. On startup, the node will immediately publish an e-stop clear message. After a configured period has elapsed, the node will publish an e-stop triggered message.
 - proximity_sensor - Contains a node for periodically publishing simulated proximity data sourced from a list as provided in ROS parameters.
 - state_machine - Contains a library for an event-driven state machine.
 - speed_limiter - Contains a node for publishing speed-limit states based on estop and proximity messages.
@@ -9,6 +9,7 @@
 
 # Architectural docs
 - See [node_interactions](./docs/node_interactions.md) for what messages are sent between what nodes.
+- See [node_parameters](./docs/node_parameters.md) for descriptions of parameters for each node.
 - See [speed_limiter_states](./docs/speed_limiter_states.md) for the state machine diagram for the speed limiter node.
 
 # Code generation tools used
