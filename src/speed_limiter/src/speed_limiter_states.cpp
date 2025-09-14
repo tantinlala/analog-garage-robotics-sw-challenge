@@ -55,11 +55,13 @@ StateId EstoppedState::Handle(const ProximityData /*event*/)
 
 // NotEstoppedState Implementation
 
-NotEstoppedState::NotEstoppedState(StateId id, const Params & params, PublisherPtr publisher)
+NotEstoppedState::NotEstoppedState(
+  StateId id, std::shared_ptr<Params> params,
+  PublisherPtr publisher)
 : BaseState(id, publisher)
 {
-  this->CheckParams(params);
-  this->params_ = &params;
+  this->CheckParams(*params);
+  this->params_ = params;
 }
 
 StateId NotEstoppedState::Handle(const EstopCleared /*event*/)

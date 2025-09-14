@@ -33,63 +33,46 @@ struct TestParams
 class NotEstoppedTest : public TestWithParam<TestParams>
 {
 protected:
-  std::shared_ptr<MockPublisher<StateId>> publisher_ptr{new MockPublisher<StateId>()};
+  std::shared_ptr<MockPublisher<StateId>> publisher_ptr{std::make_shared<MockPublisher<StateId>>()};
+  std::shared_ptr<NotEstoppedState::Params> params_ptr{std::make_shared<NotEstoppedState::Params>(
+      kGoodParams)};
 };
 
 TEST_F(NotEstoppedTest, When_BoundariesOutOfOrder_ExpectThrow)
 {
-  static const NotEstoppedState::Params kBadParams{
-    {kSlowBoundary, kStopBoundary, kFullSpeedBoundary},
-    50.0,
-  };
-
-  EXPECT_THROW(NotEstoppedState(StateId::SLOW, kBadParams, publisher_ptr), std::runtime_error);
+  params_ptr->boundaries.at(0).distance = 800.0;
+  params_ptr->boundaries.at(1).distance = 400.0;
+  EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
 TEST_F(NotEstoppedTest, When_DuplicateStates_ExpectThrow)
 {
-  static const NotEstoppedState::Params kBadParams = {
-    {kStopBoundary, kStopBoundary, kFullSpeedBoundary},
-    50.0,
-  };
-
-  EXPECT_THROW(NotEstoppedState(StateId::SLOW, kBadParams, publisher_ptr), std::runtime_error);
+  params_ptr->boundaries.at(0).state = StateId::SLOW;
+  params_ptr->boundaries.at(1).state = StateId::SLOW;
+  EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
 TEST_F(NotEstoppedTest, When_EstoppedStateStatesInParams_ExpectThrow)
 {
-  static const NotEstoppedState::Params kBadParams = {
-    {kStopBoundary, kSlowBoundary, {StateId::ESTOPPED, std::numeric_limits<float>::infinity()}},
-    50.0,
-  };
-
-  EXPECT_THROW(NotEstoppedState(StateId::SLOW, kBadParams, publisher_ptr), std::runtime_error);
+  params_ptr->boundaries.at(2).state = StateId::ESTOPPED;
+  EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
 TEST_F(NotEstoppedTest, When_NumStatesInParams_ExpectThrow)
 {
-  static const NotEstoppedState::Params kBadParams = {
-    {kStopBoundary, kSlowBoundary,
-      {StateId::num_state_ids, std::numeric_limits<float>::infinity()}},
-    50.0,
-  };
-
-  EXPECT_THROW(NotEstoppedState(StateId::SLOW, kBadParams, publisher_ptr), std::runtime_error);
+  params_ptr->boundaries.at(2).state = StateId::ESTOPPED;
+  EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
 TEST_F(NotEstoppedTest, When_HysteresisNegative_ExpectThrow)
 {
-  static const NotEstoppedState::Params kBadParams = {
-    {kStopBoundary, kSlowBoundary, kFullSpeedBoundary},
-    -50.0,
-  };
-
-  EXPECT_THROW(NotEstoppedState(StateId::SLOW, kBadParams, publisher_ptr), std::runtime_error);
+  params_ptr->hysteresis = -50.0;
+  EXPECT_THROW(NotEstoppedState(StateId::SLOW, params_ptr, publisher_ptr), std::runtime_error);
 }
 
 TEST_F(NotEstoppedTest, When_Enter_Expect_PublishState)
 {
-  NotEstoppedState state{StateId::SLOW, kGoodParams, publisher_ptr};
+  NotEstoppedState state{StateId::SLOW, params_ptr, publisher_ptr};
   sm::IState<StateId, Events> * state_ptr{&state};
 
   EXPECT_CALL(*publisher_ptr, Publish(StateId::SLOW)).Times(1);
@@ -98,7 +81,7 @@ TEST_F(NotEstoppedTest, When_Enter_Expect_PublishState)
 
 TEST_F(NotEstoppedTest, When_EstopCleared_Expect_StayInState)
 {
-  NotEstoppedState state{StateId::SLOW, kGoodParams, publisher_ptr};
+  NotEstoppedState state{StateId::SLOW, params_ptr, publisher_ptr};
   sm::IState<StateId, Events> * state_ptr{&state};
 
   const auto new_state_id{state_ptr->Process(EstopCleared{})};
@@ -107,7 +90,7 @@ TEST_F(NotEstoppedTest, When_EstopCleared_Expect_StayInState)
 
 TEST_F(NotEstoppedTest, When_EstopSet_Expect_ReturnEstopped)
 {
-  NotEstoppedState state{StateId::SLOW, kGoodParams, publisher_ptr};
+  NotEstoppedState state{StateId::SLOW, params_ptr, publisher_ptr};
   sm::IState<StateId, Events> * state_ptr{&state};
 
   const auto new_state_id{state_ptr->Process(EstopTriggered{})};
@@ -117,7 +100,7 @@ TEST_F(NotEstoppedTest, When_EstopSet_Expect_ReturnEstopped)
 TEST_P(NotEstoppedTest, Given_Distance_Expect_CorrectState)
 {
   auto [initial_state, distance, expected_state] = GetParam();
-  NotEstoppedState state{initial_state, kGoodParams, publisher_ptr};
+  NotEstoppedState state{initial_state, params_ptr, publisher_ptr};
   sm::IState<StateId, Events> * state_ptr{&state};
 
   const auto new_state_id{state_ptr->Process(ProximityData{distance})};

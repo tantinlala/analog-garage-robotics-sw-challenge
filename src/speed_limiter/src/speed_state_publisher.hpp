@@ -17,12 +17,27 @@ public:
 
   void Publish(const StateId state);
 
+  static const char * ToString(const StateId state)
+  {
+    switch (state) {
+      case StateId::FULL_SPEED:
+        return "FULL_SPEED";
+      case StateId::SLOW:
+        return "SLOW";
+      case StateId::STOP:
+        return "STOP";
+      case StateId::ESTOPPED:
+        return "ESTOPPED";
+      default:
+        return "UNKNOWN_STATE";
+    }
+  }
+
 private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp::Logger * logger_;
   std::optional<StateId> last_state_;
 
-  const char * ToString(const StateId state);
 };
 
 }

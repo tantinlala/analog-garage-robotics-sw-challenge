@@ -104,10 +104,10 @@ public:
     float hysteresis;
   };
 
-  NotEstoppedState(StateId id, const Params & params, PublisherPtr publisher);
+  NotEstoppedState(StateId id, std::shared_ptr<Params> params, PublisherPtr publisher);
 
 private:
-  const Params * params_;
+  std::shared_ptr<Params> params_;
 
   StateId Handle(const EstopCleared event) override;
   StateId Handle(const ProximityData event) override;
