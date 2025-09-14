@@ -15,7 +15,7 @@ set(SOURCE_FILES
   src/list_distance_source.cpp
 )
 
-add_executable(node_${PROJECT_NAME}  
+add_executable(node_${PROJECT_NAME}
   src/node_proximity_sensor.cpp
   ${SOURCE_FILES}
 )

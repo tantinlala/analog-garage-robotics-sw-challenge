@@ -16,7 +16,7 @@ set(INCLUDE_DIRS
   $<INSTALL_INTERFACE:include>
 )
 
-add_executable(node_${PROJECT_NAME}  
+add_executable(node_${PROJECT_NAME}
   src/node_speed_limiter.cpp
   src/speed_limiter_states.cpp
   src/speed_state_publisher.cpp
