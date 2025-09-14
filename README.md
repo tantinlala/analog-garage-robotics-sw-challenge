@@ -3,12 +3,13 @@
 This workspace implements a simple speed limiting safety system that publishes speed limit states based on the proximity of an object and whether or not an estop is pressed.
 
 # Packages in workspace
-- estop_monitor - Contains a node for publishing time-triggered simulated e-stop events. On startup, the node will immediately publish an e-stop clear message. After a configured period has elapsed, the node will publish an e-stop triggered message.
-- proximity_sensor - Contains a node for periodically publishing simulated proximity data sourced from a list as provided in ROS parameters.
-- state_machine - Contains a library for an event-driven state machine.
-- speed_limiter - Contains a node for publishing speed-limit states based on estop and proximity messages.
+- **estop_monitor** - Contains a node for publishing time-triggered simulated e-stop events. On startup, the node will immediately publish an e-stop clear message. After a configured period has elapsed, the node will publish an e-stop triggered message.
+- **proximity_sensor** - Contains a node for periodically publishing simulated proximity data sourced from a list as provided in ROS parameters.
+- **state_machine** - Contains a library for an event-driven state machine.
+- **speed_limiter** - Contains a node for publishing speed-limit states based on estop and proximity messages.
   - This node also logs a new speed-limit state whenever the state changes.
-- safety_system - Contains a [launch](./src/safety_system/launch/visual_sim_launch.py) file and a parameter [yaml](./src/safety_system/config/visual_sim_params.yaml) file used to bring up all the nodes in a manner where messages are published slowly enough to visually follow a simulated safety system. Also contains an automated [integration test](./src/safety_system/test/test_integration.py) that checks that speed states are published in the expected order given a sequence of messages coming from the estop_monitor and proximity_sensor nodes.
+- **safety_system** - Contains a [launch](./src/safety_system/launch/visual_sim_launch.py) file and a parameter [yaml](./src/safety_system/config/visual_sim_params.yaml) file used to bring up all the nodes in a manner where messages are published slowly enough to visually follow a simulated safety system. Also contains an automated [integration test](./src/safety_system/test/test_integration.py) that checks that speed states are published in the expected order given a sequence of messages coming from the estop_monitor and proximity_sensor nodes.
+- **mvsim_controller** - Contains a simple node that consumes the speed limit state and uses it to determine what velocity to command an [mvsim](https://mvsimulator.readthedocs.io/en/latest/index.html) bot at any moment.
 
 # Architectural docs
 - See [node_interactions](./docs/node_interactions.md) for what messages are sent between what nodes.
@@ -50,7 +51,7 @@ Run `./test.sh` to run all tests for this workspace while viewing a verbose outp
 
 ## Launching simulated safety system
 
-MVSim was used for a visual simulator in lieu of ros2_ur5_interface due to the ursim_e-series docker image only being built for amd64 platforms (my personal computer is arm64). MVSim is a lightweight mobile robotics simulator and is installed as part of my docker image.
+mvsim was used for a visual simulator in lieu of ros2_ur5_interface due to the ursim_e-series docker image only being built for amd64 platforms (my personal computer is arm64). mvsim is a lightweight mobile robotics simulator and is installed as part of my docker image.
 
 To launch a simulated safety system that can be viewed visually, go through the following steps:
 1. Run `./launch_mvsim.sh` to start up a simulated mobile robot. Wait until the mvsim GUI shows up.
