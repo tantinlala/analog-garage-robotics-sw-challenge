@@ -12,6 +12,7 @@ RUN apt update -q \
     python3-pip \
     xauth \
     clangd \
+    vim \
     && apt clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

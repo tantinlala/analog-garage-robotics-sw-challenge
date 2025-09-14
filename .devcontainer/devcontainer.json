@@ -21,7 +21,8 @@
               "tamasfe.even-better-toml",
               "timonwong.shellcheck",
               "yzhang.markdown-all-in-one",
-              "llvm-vs-code-extensions.vscode-clangd"
+              "llvm-vs-code-extensions.vscode-clangd",
+              "bierner.markdown-mermaid"
           ],
           "settings": {
               "files.associations": {

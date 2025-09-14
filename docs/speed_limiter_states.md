@@ -3,7 +3,8 @@ The following diagram represents the speed limiting state machine.
 Note the following behavior:
 
 - The state machine assumes it is in the estopped state until it sees the first estop message.
-- After estop has been cleared, it assumes it is in the stop state until it sees first proximity message.
+- After estop has been cleared, it assumes it is in the stop state until it sees the first proximity message.
+- On entry into each state, an identifier for the state is published as a message and logged.
 
 ```mermaid
 stateDiagram-v2
