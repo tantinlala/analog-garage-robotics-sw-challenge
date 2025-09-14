@@ -48,4 +48,11 @@ Run `./test.sh` to run all tests for this workspace while viewing a verbose outp
 
 ## Launching simulated safety system
 
-To launch a simulated safety system that updates at a pace suitable for visual verification, run `ros2 launch safety_system visual_sim_launch.py`
+MVSim was used for a visual simulator in lieu of ros2_ur5_interface due to the ursim_e-series docker image only being built for amd64 platforms (my personal computer is arm64). MVSim is a lightweight mobile robotics simulator and is installed as part of my docker image.
+
+To launch a simulated safety system that can be viewed visually, go through the following steps:
+1. Run `./launch_mvsim.sh` to start up a simulated mobile robot. Wait until the mvsim GUI shows up.
+2. Run `ros2 run mvsim_controller node_mvsim_controller` to start up a simple process that commands a velocity to match the current speed limit
+3. Run `./launch_safety.sh` to start up all the nodes in the safety system.
+
+You can play with the timings of distance messages in [visual_sim_params.yaml](src/safety_system/config/visual_sim_params.yaml) to change how the robot speeds up and slows down.

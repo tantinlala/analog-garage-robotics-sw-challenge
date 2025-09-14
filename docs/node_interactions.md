@@ -10,7 +10,12 @@ flowchart TD
     Estop-- Estop Set / Clear -->Speed
     Proximity-- Proximity Data -->Speed
     end
-    Speed-- Speed State -->Robot
+    Speed-- Speed State -->Controller1
+    Speed-- Speed State -->Controller2
+    Controller1@{ label: "Controller for Robot 1"}
+    Controller2@{ label: "Controller for Robot 2"}
+    Controller1 -- Robot1-Specific Commands --> Robot1
+    Controller2 -- Robot2-Specific Commands --> Robot2
 ```
 
 # Quality of Service Chosen
