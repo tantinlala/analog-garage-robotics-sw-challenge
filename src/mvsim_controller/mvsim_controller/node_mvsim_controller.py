@@ -31,8 +31,10 @@ class MVSimController(Node):
         self.publisher_.publish(msg)
 
     def speed_state_callback(self, msg):
-        if (msg.data == "STOP"):
-            self.present_speed_ = self.STOP_SPEED
+        if (msg.data == "ESTOPPED"):
+            self.present_speed_ = 0.0
+        elif (msg.data == "STOP"):
+            self.present_speed_ = 0.0
         elif (msg.data == "SLOW"):
             self.present_speed_ = self.SLOW_SPEED
         elif (msg.data == "FULL_SPEED"):
