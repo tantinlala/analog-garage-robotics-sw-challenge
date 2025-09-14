@@ -85,13 +85,14 @@ class NotEstoppedState : public BaseState
     public:
         struct ProximityBoundary
         {
-            StateId boundary_state;
+            StateId state;
             float distance;
         };
+        using Boundaries = std::vector<ProximityBoundary>;
 
         struct Params 
         {
-            std::vector<ProximityBoundary> boundaries;
+            Boundaries boundaries;
             float hysteresis;
         };
 

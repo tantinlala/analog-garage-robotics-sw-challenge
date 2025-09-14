@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <array>
 #include <optional>
 #include <stdexcept>
@@ -21,7 +22,7 @@ class StateMachine final
     public:
 
     using StateT = IState<StateIdT, EventContainerT>;
-    using StateArray = std::array<StateT *const, 
+    using StateArray = std::array<std::shared_ptr<StateT>, 
         static_cast<std::size_t>(StateIdT::num_state_ids)>;
 
     /**
@@ -32,7 +33,7 @@ class StateMachine final
      * @param states Array of pointers to state instances representing all
      * possible states for this state machine
      */
-    StateMachine(StateArray&& states) : states_(std::move(states))
+    StateMachine(StateArray&& states) : states_(states)
     {
         std::optional<std::size_t> last_index;
         for (auto & state : this->states_)
@@ -60,7 +61,7 @@ class StateMachine final
         }
 
         this->current_index_ = 0;
-        this->states_.at(0)->Enter();
+        this->states_.at(0).get()->Enter();
     }
 
     /**
@@ -93,7 +94,7 @@ class StateMachine final
             throw std::out_of_range("StateMachine: Invalid state index");
         }
 
-        return this->states_.at(index);
+        return this->states_.at(index).get();
     }
 };
 }

@@ -74,17 +74,17 @@ StateId NotEstoppedState::Handle(const ProximityData event)
     bool passed_current_state{false};
     for (auto &boundary : this->params_->boundaries)
     {
-        passed_current_state |= (boundary.boundary_state == current_state);
+        passed_current_state |= (boundary.state == current_state);
         if (passed_current_state)
         {
             if (distance < boundary.distance + hysteresis)
             {
-                return boundary.boundary_state;
+                return boundary.state;
             }
         }
         else if (distance <= boundary.distance)
         {
-            return boundary.boundary_state;
+            return boundary.state;
         }
     }
 
@@ -113,7 +113,7 @@ void NotEstoppedState::CheckParams(const Params& params)
     std::set<StateId> state_set;
     for (auto & boundary : params.boundaries)
     {
-        state_set.insert(boundary.boundary_state);
+        state_set.insert(boundary.state);
     }
     if (state_set.size() != params.boundaries.size())
     {
