@@ -8,7 +8,7 @@
 #include <std_msgs/msg/string.hpp>
 #include "state_machine/state_machine.hpp"
 #include "speed_limiter_states.hpp"
-#include "state_publisher.hpp"
+#include "speed_state_publisher.hpp"
 
 namespace analog::speed_limiter 
 {
@@ -22,10 +22,7 @@ class Node : public rclcpp::Node
             rclcpp::QoS speed_state_qos{rclcpp::SystemDefaultsQoS()};
             speed_state_qos.keep_last(2).transient_local().reliable();
             auto publisher = this->create_publisher<std_msgs::msg::String>("analog/speed_state", speed_state_qos);
-
-            auto state_publisher = std::make_shared<StatePublisher>();
-            state_publisher->SetPublisher(publisher);
-            state_publisher->SetLogger(this->logger_);
+            auto state_publisher {std::make_shared<SpeedStatePublisher>(publisher, this->logger_)};
 
             auto estopped_state = std::make_shared<EstoppedState>(state_publisher);
             auto stop_state = std::make_shared<NotEstoppedState>(
@@ -56,7 +53,7 @@ class Node : public rclcpp::Node
             );
 
             rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
-            estop_qos.keep_last(1).transient_local().reliable();
+            estop_qos.keep_last(2).transient_local().reliable();
 
             this->estop_subscription_ = this->create_subscription<std_msgs::msg::Bool>(
                 "analog/estop_triggered", 

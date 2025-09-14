@@ -27,7 +27,7 @@ def generate_test_description():
             package='proximity_sensor',
             executable='node_proximity_sensor',
             parameters=[
-                {'sample_time_ms': 10},
+                {'sample_time_ms': 5},
                 {'distance_series': [
                     810.0, # FULL_SPEED
                     809.0,
@@ -89,7 +89,7 @@ class TestSimulatedSafetySystem(unittest.TestCase):
             String, 'analog/speed_state', append_and_log, 10)
         try:
             # Listen to the analog/speed_state topic for few seconds
-            end_time = time.time() + 11
+            end_time = time.time() + 9
             while time.time() < end_time:
                 # spin to get subscriber callback executed
                 rclpy.spin_once(self.node, timeout_sec=1)

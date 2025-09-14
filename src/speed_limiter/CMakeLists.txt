@@ -11,10 +11,6 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(state_machine REQUIRED)
 
-set(SOURCE_FILES
-  src/speed_limiter_states.cpp
-)
-
 set(INCLUDE_DIRS
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -22,7 +18,8 @@ set(INCLUDE_DIRS
 
 add_executable(node_${PROJECT_NAME}  
   src/node_speed_limiter.cpp
-  ${SOURCE_FILES}
+  src/speed_limiter_states.cpp
+  src/speed_state_publisher.cpp
 )
 
 ament_target_dependencies(node_${PROJECT_NAME} rclcpp std_msgs state_machine)
@@ -53,7 +50,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(test_${PROJECT_NAME}
     ${TEST_FILES}
-    ${SOURCE_FILES}
+    src/speed_limiter_states.cpp
   )
 
   target_include_directories(test_${PROJECT_NAME} PRIVATE

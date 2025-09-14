@@ -22,7 +22,7 @@ class Node : public rclcpp::Node
             this->timer_ = this->create_wall_timer(duration_ms, std::bind(&Node::TimerCallback, this));
 
             rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
-            estop_qos.keep_last(1).transient_local().reliable();
+            estop_qos.keep_last(2).transient_local().reliable();
             this->publisher_ = this->create_publisher<std_msgs::msg::Bool>("analog/estop_triggered", estop_qos);
 
             auto message {std_msgs::msg::Bool()};
