@@ -8,15 +8,17 @@ from geometry_msgs.msg import Twist
 class MVSimController(Node):
     SLOW_SPEED = 0.5
     FULL_SPEED = 1.0
+    CMD_PUBLISH_PERIOD = 0.5
 
     def __init__(self):
         super().__init__('mvsim_controller')
 
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
-        timer_period = self.FULL_SPEED
+        timer_period = self.CMD_PUBLISH_PERIOD
 
         self.timer_ = self.create_timer(timer_period, self.timer_callback)
         self.present_speed_ = 0.0
+        self.estopped_ = False
 
         self.subscription_ = self.create_subscription(
             String,
@@ -25,6 +27,9 @@ class MVSimController(Node):
             10)
 
     def timer_callback(self):
+        if self.estopped_:
+            return
+
         msg = Twist()
         msg.linear.x = self.present_speed_
         msg.angular.z = 0.0
@@ -32,8 +37,16 @@ class MVSimController(Node):
 
     def speed_state_callback(self, msg):
         if (msg.data == "ESTOPPED"):
+            msg = Twist()
+            msg.linear.x = 0.0
+            msg.angular.z = 0.0
+            self.publisher_.publish(msg)
             self.present_speed_ = 0.0
-        elif (msg.data == "STOP"):
+            self.estopped_ = True
+            return
+
+        self.estopped_ = False
+        if (msg.data == "STOP"):
             self.present_speed_ = 0.0
         elif (msg.data == "SLOW"):
             self.present_speed_ = self.SLOW_SPEED
