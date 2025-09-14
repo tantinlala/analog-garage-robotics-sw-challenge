@@ -1,50 +1,48 @@
-#include <cstdio>
 #include <rclcpp/parameter.hpp>
 #include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/timer.hpp>
-#include <rmw/types.h>
 #include <std_msgs/msg/bool.hpp>
+#include "node_estop_monitor.hpp"
 
 namespace analog::estop_monitor
 {
 
-class Node : public rclcpp::Node
+Node::Node()
+: rclcpp::Node("estop_monitor")
 {
-public:
-  Node()
-  : rclcpp::Node("estop_monitor")
-  {
-    // Set up timer
-    this->declare_parameter(kTriggerTimeName, 10'000);
-    rclcpp::Parameter time_param = this->get_parameter(kTriggerTimeName);
-    std::chrono::milliseconds duration_ms{time_param.as_int()};
-    this->timer_ = this->create_wall_timer(duration_ms, std::bind(&Node::TimerCallback, this));
+  this->timer_ = this->SetupTimer();
+  this->publisher_ = this->SetupPublisher();
 
-    rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
-    estop_qos.keep_last(2).transient_local().reliable();
-    this->publisher_ = this->create_publisher<std_msgs::msg::Bool>(
-      "analog/estop_triggered",
-      estop_qos);
+  auto message {std_msgs::msg::Bool()};
+  message.data = false;
+  this->publisher_->publish(message);
+}
 
-    auto message {std_msgs::msg::Bool()};
-    message.data = false;
-    this->publisher_->publish(message);
-  }
+rclcpp::TimerBase::SharedPtr Node::SetupTimer()
+{
+  this->declare_parameter(kTriggerTimeName, 10'000);
+  rclcpp::Parameter time_param = this->get_parameter(kTriggerTimeName);
+  std::chrono::milliseconds duration_ms{time_param.as_int()};
+  return this->create_wall_timer(duration_ms, std::bind(&Node::TimerCallback, this));
+}
 
-private:
-  static constexpr const char * kTriggerTimeName{"trigger_time_ms"};
-  rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr publisher_;
+rclcpp::Publisher<Node::EstopMsgType>::SharedPtr Node::SetupPublisher()
+{
+  rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
+  estop_qos.keep_last(kEstopDepth).transient_local().reliable();
+  return this->create_publisher<std_msgs::msg::Bool>(
+    "analog/estop_triggered",
+    estop_qos);
+}
 
-  void TimerCallback()
-  {
-    this->timer_->cancel();
-    auto message {std_msgs::msg::Bool()};
-    message.data = true;
-    this->publisher_->publish(message);
-  }
-};
+void Node::TimerCallback()
+{
+  this->timer_->cancel();
+  auto message {std_msgs::msg::Bool()};
+  message.data = true;
+  this->publisher_->publish(message);
+}
 
 }
 
