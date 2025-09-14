@@ -45,7 +45,7 @@ def generate_test_description():
         ),
 
     timer_proximity_sensor = TimerAction(
-        period = 6.0,
+        period = 7.0,
         actions = node_proximity_sensor 
     )
 
@@ -55,7 +55,7 @@ def generate_test_description():
             package='estop_monitor',
             executable='node_estop_monitor',
             parameters=[
-                {'trigger_time_ms': 8000}
+                {'trigger_time_ms': 10000}
             ]
         ),
         timer_speed_limiter,
@@ -89,7 +89,7 @@ class TestSimulatedSafetySystem(unittest.TestCase):
             String, 'analog/speed_state', append_and_log, 10)
         try:
             # Listen to the analog/speed_state topic for few seconds
-            end_time = time.time() + 9
+            end_time = time.time() + 13
             while time.time() < end_time:
                 # spin to get subscriber callback executed
                 rclpy.spin_once(self.node, timeout_sec=1)
