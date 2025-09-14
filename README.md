@@ -1,5 +1,7 @@
 # Summary
 
+This workspace implements a simple speed limiting safety system where that publishes speed limit states depending on the proximity of an object and depending on whether or not an estop is pressed.
+
 # Packages in workspace
 - estop_monitor - Contains a node for publishing time-triggered simulated e-stop events. On startup, the node will immediately publish an e-stop clear message. After a configured period has elapsed, the node will publish an e-stop triggered message.
 - proximity_sensor - Contains a node for periodically publishing simulated proximity data sourced from a list as provided in ROS parameters.
