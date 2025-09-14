@@ -7,18 +7,18 @@
 namespace analog::proximity_sensor
 {
 
-class ListDistanceSource 
+class ListDistanceSource
 {
-    public:
-        using Series = std::vector<double>;
+public:
+  using Series = std::vector<double>;
 
-        ListDistanceSource(Series& series);
+  ListDistanceSource(Series & series);
 
-        std::optional<float> GetDistance();
+  std::optional<float> GetDistance();
 
-    private:
-        Series series_;
-        std::vector<double>::iterator iterator_;
+private:
+  Series series_;
+  std::vector<double>::iterator iterator_;
 };
 
 }
