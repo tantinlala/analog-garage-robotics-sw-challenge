@@ -29,15 +29,15 @@ def generate_test_description():
             parameters=[
                 {'sample_time_ms': 5},
                 {'distance_series': [
-                    810.0, # FULL_SPEED
+                    811.0, # FULL_SPEED
                     809.0,
                     400.0, # STOP
                     401.0,
                     800.0, # SLOW
                     801.0,
                     400.0, # STOP
-                    850.0, # FULL_SPEED
-                    450.0, # SLOW
+                    851.0, # FULL_SPEED
+                    451.0, # SLOW
                     200.0, # STOP
                     1000.0 # FULL_SPEED
                 ]}

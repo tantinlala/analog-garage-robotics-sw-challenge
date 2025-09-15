@@ -94,7 +94,7 @@ StateId NotEstoppedState::Handle(const ProximityData event)
   for (auto & boundary : this->params_->boundaries) {
     passed_current_state |= (boundary.state == current_state);
     if (passed_current_state) {
-      if (distance < boundary.distance_mm + hysteresis) {
+      if (distance <= boundary.distance_mm + hysteresis) {
         return boundary.state;
       }
     } else if (distance <= boundary.distance_mm) {
