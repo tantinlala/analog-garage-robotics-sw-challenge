@@ -15,8 +15,8 @@ class StateMachineTest : public Test
 {
 protected:
   using FakeStateMachine = StateMachine<TestStateId, TestEventContainer>;
-  std::shared_ptr<MockState> state_a;
-  std::shared_ptr<MockState> state_b;
+  std::unique_ptr<MockState> state_a;
+  std::unique_ptr<MockState> state_b;
 
   MockState * raw_ptr_a;
   MockState * raw_ptr_b;

@@ -21,7 +21,7 @@ class StateMachine final
 {
 public:
   using StateT = IState<StateIdT, EventContainerT>;
-  using StateArray = std::array<std::shared_ptr<StateT>,
+  using StateArray = std::array<std::unique_ptr<StateT>,
       static_cast<std::size_t>(StateIdT::num_state_ids)>;
 
   /**
@@ -33,7 +33,7 @@ public:
    * possible states for this state machine
    */
   StateMachine(StateArray && states)
-  : states_(states)
+  : states_(std::move(states))
   {
     std::optional<std::size_t> last_index;
     for (auto & state : this->states_) {
