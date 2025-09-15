@@ -79,28 +79,28 @@ std::unique_ptr<Node::SpeedStateMachine> Node::SetupStateMachine(
   std::shared_ptr<NotEstoppedState::Params> params,
   std::shared_ptr<SpeedStatePublisher> state_publisher)
 {
-  auto estopped_state = std::make_shared<EstoppedState>(state_publisher);
-  auto stop_state = std::make_shared<NotEstoppedState>(
+  auto estopped_state = std::make_unique<EstoppedState>(state_publisher);
+  auto stop_state = std::make_unique<NotEstoppedState>(
     StateId::STOP,
     params,
     state_publisher
   );
-  auto slow_state = std::make_shared<NotEstoppedState>(
+  auto slow_state = std::make_unique<NotEstoppedState>(
     StateId::SLOW,
     params,
     state_publisher
   );
-  auto full_speed_state = std::make_shared<NotEstoppedState>(
+  auto full_speed_state = std::make_unique<NotEstoppedState>(
     StateId::FULL_SPEED,
     params,
     state_publisher
   );
   return std::make_unique<SpeedStateMachine>(
     SpeedStateMachine::StateArray{
-      estopped_state,
-      stop_state,
-      slow_state,
-      full_speed_state
+      std::move(estopped_state),
+      std::move(stop_state),
+      std::move(slow_state),
+      std::move(full_speed_state)
     }
   );
 }
