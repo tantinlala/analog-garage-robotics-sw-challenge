@@ -2,7 +2,6 @@
 #include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/timer.hpp>
-#include <std_msgs/msg/bool.hpp>
 #include "node_estop_monitor.hpp"
 
 namespace analog::estop_monitor

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <optional>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
