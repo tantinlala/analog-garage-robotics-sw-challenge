@@ -13,13 +13,13 @@ The **stop_boundary**, **slow_boundary**, and **hysteresis** parameters are used
 
 ## If the present state is "STOP"
 
-x < (stop_boundary + hysteresis)
+x <= (stop_boundary + hysteresis)
 - Next state is "STOP"
 
-(stop_boundary + hysteresis) <= x < (slow_boundary + hysteresis)
+(stop_boundary + hysteresis) < x <= (slow_boundary + hysteresis)
 - Next state is "SLOW"
 
-(slow_boundary + hysteresis) <= x
+(slow_boundary + hysteresis) < x
 - Next state is "FULL_SPEED"
 
 ## If the present state is "SLOW"
@@ -27,10 +27,10 @@ x < (stop_boundary + hysteresis)
 x <= stop_boundary
 - Next state is "STOP"
 
-stop_boundary < x < (slow_boundary + hysteresis)
+stop_boundary < x <= (slow_boundary + hysteresis)
 - Next state is "SLOW"
 
-(slow_boundary + hysteresis) <= x
+(slow_boundary + hysteresis) < x
 - Next state is "FULL_SPEED"
 
 ## If the present state is "FULL_SPEED"
