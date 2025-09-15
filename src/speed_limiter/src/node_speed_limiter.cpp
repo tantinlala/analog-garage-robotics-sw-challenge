@@ -69,7 +69,7 @@ std::shared_ptr<SpeedStatePublisher> Node::SetupStatePublisher()
 {
   rclcpp::QoS speed_state_qos{rclcpp::SystemDefaultsQoS()};
   speed_state_qos.keep_last(kSpeedStateDepth).transient_local().reliable();
-  auto publisher = this->create_publisher<std_msgs::msg::String>(
+  auto publisher = this->create_publisher<SpeedStatePublisher::SpeedStateMsgType>(
     "analog/speed_state",
     speed_state_qos);
   return std::make_shared<SpeedStatePublisher>(publisher, this->logger_);

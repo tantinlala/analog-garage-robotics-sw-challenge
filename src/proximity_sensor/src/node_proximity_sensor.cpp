@@ -15,7 +15,7 @@ namespace analog::proximity_sensor
 
 Node::Node()
 : rclcpp::Node("proximity_sensor"),
-  publisher_(this->create_publisher<std_msgs::msg::Float32>(
+  publisher_(this->create_publisher<ProximityMsgType>(
       "analog/proximity_data",
       rclcpp::SensorDataQoS()))
 {

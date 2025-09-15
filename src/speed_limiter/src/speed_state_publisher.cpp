@@ -4,7 +4,7 @@
 namespace analog::speed_limiter
 {
 SpeedStatePublisher::SpeedStatePublisher(
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher,
+  rclcpp::Publisher<SpeedStateMsgType>::SharedPtr publisher,
   rclcpp::Logger & logger)
 : publisher_(publisher), logger_(&logger)
 {
@@ -14,7 +14,7 @@ SpeedStatePublisher::SpeedStatePublisher(
 void SpeedStatePublisher::Publish(const StateId state)
 {
   if (publisher_) {
-    auto message = std_msgs::msg::String();
+    auto message = SpeedStateMsgType();
     const char * state_string(state_id_to_string(state));
     RCLCPP_INFO(*this->logger_, "Publishing %s", state_string);
     message.data = state_string;

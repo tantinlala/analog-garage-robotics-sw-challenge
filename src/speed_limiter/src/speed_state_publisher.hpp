@@ -14,8 +14,10 @@ namespace analog::speed_limiter
 class SpeedStatePublisher : public IPublisher<StateId>
 {
 public:
+  using SpeedStateMsgType = std_msgs::msg::String;
+
   SpeedStatePublisher(
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher,
+    rclcpp::Publisher<SpeedStateMsgType>::SharedPtr publisher,
     rclcpp::Logger & logger);
 
   /**
@@ -25,7 +27,7 @@ public:
   void Publish(const StateId state) override;
 
 private:
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+  rclcpp::Publisher<SpeedStateMsgType>::SharedPtr publisher_;
   rclcpp::Logger * logger_;
 };
 

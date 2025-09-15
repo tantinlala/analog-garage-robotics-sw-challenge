@@ -14,7 +14,7 @@ Node::Node()
   this->timer_ = this->SetupTimer();
   this->publisher_ = this->SetupPublisher();
 
-  auto message {std_msgs::msg::Bool()};
+  auto message {EstopMsgType()};
   message.data = false;
   this->publisher_->publish(message);
 }
@@ -31,7 +31,7 @@ rclcpp::Publisher<Node::EstopMsgType>::SharedPtr Node::SetupPublisher()
 {
   rclcpp::QoS estop_qos{rclcpp::SystemDefaultsQoS()};
   estop_qos.keep_last(kEstopDepth).transient_local().reliable();
-  return this->create_publisher<std_msgs::msg::Bool>(
+  return this->create_publisher<EstopMsgType>(
     "analog/estop_triggered",
     estop_qos);
 }
@@ -39,7 +39,7 @@ rclcpp::Publisher<Node::EstopMsgType>::SharedPtr Node::SetupPublisher()
 void Node::TimerCallback()
 {
   this->timer_->cancel();
-  auto message {std_msgs::msg::Bool()};
+  auto message {EstopMsgType()};
   message.data = true;
   this->publisher_->publish(message);
 }
