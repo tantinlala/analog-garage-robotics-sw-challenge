@@ -23,7 +23,7 @@ private:
   using EstopMsgType = std_msgs::msg::Bool;
 
   static constexpr const char * kTriggerTimeName{"trigger_time_ms"};
-  static constexpr std::size_t kEstopDepth{2};
+  static constexpr std::size_t kEstopDepth{1};
 
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<EstopMsgType>::SharedPtr publisher_;

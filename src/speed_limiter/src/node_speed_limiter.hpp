@@ -34,8 +34,8 @@ private:
   static constexpr float kDefaultSlowBoundary{800.0};
   static constexpr float kDefaultHysteresis{50.0};
 
-  static constexpr std::size_t kSpeedStateDepth{2};
-  static constexpr std::size_t kEstopDepth{2};
+  static constexpr std::size_t kSpeedStateDepth{1};
+  static constexpr std::size_t kEstopDepth{1};
 
   /**
    * @brief Helper function for declaring a ROS2 boundary parameter and updating the params struct.
