@@ -18,8 +18,8 @@ Node::Node()
 : rclcpp::Node("speed_limiter"),
   logger_(this->get_logger())
 {
-  auto params = this->SetupParams();
-  auto state_publisher = this->SetupStatePublisher();
+  std::shared_ptr<NotEstoppedState::Params> params = this->SetupParams();
+  std::shared_ptr<SpeedStatePublisher> state_publisher = this->SetupStatePublisher();
   this->state_machine_ = this->SetupStateMachine(params, state_publisher);
   this->estop_subscription_ = this->SubscribeToEstop();
   this->proximity_subscription_ = this->SubscribeToProximity();
