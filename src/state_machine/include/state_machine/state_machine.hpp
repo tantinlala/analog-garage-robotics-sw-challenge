@@ -59,7 +59,7 @@ public:
     }
 
     this->current_index_ = 0;
-    this->states_.at(0).get()->Enter();
+    this->states_.at(0)->Enter();
   }
 
   /**
